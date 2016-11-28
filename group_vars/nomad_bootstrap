@@ -1,0 +1,5 @@
+---
+
+nomad_node_role: bootstrap
+nomad_server: true
+nomad_client: false

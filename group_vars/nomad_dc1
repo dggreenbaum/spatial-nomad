@@ -1,0 +1,4 @@
+---
+
+nomad_datacenter: dc1
+nomad_group_name: "nomad_dc2"

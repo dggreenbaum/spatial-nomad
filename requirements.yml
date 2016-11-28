@@ -1,0 +1,10 @@
+# # Role for Hashicorp Nomad
+# - src: brianshumate.nomad
+
+# Temp nomad role until upstream is fixed
+- src: https://github.com/dggreenbaum/ansible-nomad
+  version: develop
+  name: brianshumate.nomad
+
+# Role for Hashicorp Consul
+- src: brianshumate.consul

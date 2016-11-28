@@ -1,0 +1,22 @@
+---
+
+- hosts: consul_dc1
+  become: true
+  roles:
+    - role: brianshumate.consul
+
+
+- hosts: consul_dc2
+  become: true
+  roles:
+    - role: brianshumate.consul
+
+- hosts: nomad_dc1
+  become: true
+  roles:
+    - role: brianshumate.nomad
+
+- hosts: nomad_dc2
+  become: true
+  roles:
+    - role: brianshumate.nomad
