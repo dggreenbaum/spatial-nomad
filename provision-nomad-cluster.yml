@@ -1,22 +1,26 @@
 ---
 
-- hosts: consul_dc1
+- hosts: all
+  gather_facts: no
+  tasks:
+    - wait_for:
+        port: 22
+        delay: 10
+    - name: ping all hosts
+      ping:
+    - name: Print env
+      debug:
+        var: env
+    - name: Print dc
+      debug:
+        var: dc
+
+- hosts: "CONSUL_{{ env }}_{{ dc }}"
   become: true
   roles:
     - role: brianshumate.consul
 
-
-- hosts: consul_dc2
-  become: true
-  roles:
-    - role: brianshumate.consul
-
-- hosts: nomad_dc1
-  become: true
-  roles:
-    - role: brianshumate.nomad
-
-- hosts: nomad_dc2
+- hosts: "NOMAD_{{ env }}_{{ dc }}"
   become: true
   roles:
     - role: brianshumate.nomad

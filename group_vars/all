@@ -1,14 +1,19 @@
 ---
 
 consul_version: 0.7.1
-consul_iface: enp0s8
+consul_iface: "{{ ansible_default_ipv4.interface }}"
 consul_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+consul_iface]['ipv4']['address'] }}"
 # TODO move this to Vault
 consul_raw_key: "pFgiteZwrzu6ovQ8R8fgMQ=="
 consul_dnsmasq_enable: true
+consul_datacenter: "{{ dc }}"
+consul_group_name: "CONSUL_{{ env }}_{{ dc }}"
+consul_node_name: "{{ ansible_hostname }}"
 
 nomad_version: 0.5.0
 nomad_zip_sha256: 7f7b9af2b1ff3e2c6b837b6e95968415237bb304e1e82802bc42abf6f8645a43
-nomad_iface: enp0s8
+nomad_iface: "{{ ansible_default_ipv4.interface }}"
 nomad_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+nomad_iface]['ipv4']['address'] }}"
 nomad_enable_docker: true
+nomad_datacenter: "{{ dc }}"
+nomad_group_name: "NOMAD_{{ env }}_{{ dc }}"

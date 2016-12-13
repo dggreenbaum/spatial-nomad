@@ -1,5 +1,9 @@
 .DS_Store
 .vagrant
-ubuntu-xenial-16.04-cloudimg-console.log
+*-console.log
 playbook.retry
 digital_ocean.ini
+secret.tf
+*.tfstate*
+*.cache
+*.retry

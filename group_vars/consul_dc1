@@ -1,4 +1,0 @@
----
-
-consul_datacenter: dc1
-consul_group_name: "consul_dc1"

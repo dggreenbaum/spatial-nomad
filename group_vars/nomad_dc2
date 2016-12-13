@@ -1,4 +1,0 @@
----
-
-nomad_datacenter: dc2
-nomad_group_name: "nomad_dc2"
