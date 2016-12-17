@@ -17,3 +17,7 @@ nomad_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+nomad_iface]['ip
 nomad_enable_docker: true
 nomad_datacenter: "{{ dc }}"
 nomad_group_name: "NOMAD_{{ env }}_{{ dc }}"
+
+spatial_firewall_hosts: "{{ nomad_group_name }}"
+spatial_firewall_external_adapter: eth0
+spatial_firewall_internal_adapter: "{{ nomad_iface }}"

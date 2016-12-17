@@ -8,3 +8,8 @@
 
 # Role for Hashicorp Consul
 - src: brianshumate.consul
+
+- src: git@github.com:dggreenbaum/spatial-firewall.git
+  scm: git
+  version: master
+  name: dggreenbaum.spatial-firewall

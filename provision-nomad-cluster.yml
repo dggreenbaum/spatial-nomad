@@ -24,3 +24,8 @@
   become: true
   roles:
     - role: brianshumate.nomad
+
+- hosts: "NOMAD_{{ env }}_{{ dc }}"
+  become: true
+  roles:
+    - role: dggreenbaum.spatial-firewall
