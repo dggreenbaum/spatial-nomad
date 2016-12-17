@@ -14,10 +14,10 @@ resource "digitalocean_droplet" "srv" {
     ssh_keys = ["cf:79:5f:c3:36:c2:4b:13:d6:2c:9b:eb:92:aa:1b:f1"]
     private_networking = true
     tags   = [
-      "CONSUL_${var.env}_${var.dc}",
-      "CONSUL_SRV",
-      "NOMAD_${var.env}_${var.dc}",
-      "NOMAD_SRV"
+      "${digitalocean_tag.consul_env.id}",
+      "${digitalocean_tag.consul_srv.id}",
+      "${digitalocean_tag.nomad_env.id}",
+      "${digitalocean_tag.nomad_srv.id}"
     ]
     provisioner "remote-exec" {
         inline = [
@@ -28,7 +28,7 @@ resource "digitalocean_droplet" "srv" {
         connection {
           type = "ssh"
           user = "root"
-          private_key = "${file("/Users/dggreenbaum/.ssh/id_rsa")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
         }
     }
 }
@@ -42,10 +42,10 @@ resource "digitalocean_droplet" "clt" {
     ssh_keys = ["cf:79:5f:c3:36:c2:4b:13:d6:2c:9b:eb:92:aa:1b:f1"]
     private_networking = true
     tags   = [
-      "CONSUL_${var.env}_${var.dc}",
-      "CONSUL_CLT",
-      "NOMAD_${var.env}_${var.dc}",
-      "NOMAD_CLT"
+      "${digitalocean_tag.consul_env.id}",
+      "${digitalocean_tag.consul_clt.id}",
+      "${digitalocean_tag.nomad_env.id}",
+      "${digitalocean_tag.nomad_clt.id}"
     ]
     provisioner "remote-exec" {
         inline = [
@@ -56,13 +56,12 @@ resource "digitalocean_droplet" "clt" {
         connection {
           type = "ssh"
           user = "root"
-          private_key = "${file("/Users/dggreenbaum/.ssh/id_rsa")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
         }
     }
 }
 
 resource "digitalocean_droplet" "bsp" {
-    depends_on = ["digitalocean_droplet.srv", "digitalocean_droplet.clt"]
     image = "ubuntu-16-04-x64"
     name = "${var.env}-${var.dc}-nomad-bsp"
     region = "${var.dc}"
@@ -70,10 +69,10 @@ resource "digitalocean_droplet" "bsp" {
     ssh_keys = ["cf:79:5f:c3:36:c2:4b:13:d6:2c:9b:eb:92:aa:1b:f1"]
     private_networking = true
     tags   = [
-      "CONSUL_${var.env}_${var.dc}",
-      "CONSUL_BSP",
-      "NOMAD_${var.env}_${var.dc}",
-      "NOMAD_BSP"
+      "${digitalocean_tag.consul_env.id}",
+      "${digitalocean_tag.consul_bsp.id}",
+      "${digitalocean_tag.nomad_env.id}",
+      "${digitalocean_tag.nomad_bsp.id}"
     ]
     provisioner "remote-exec" {
         inline = [
@@ -84,9 +83,14 @@ resource "digitalocean_droplet" "bsp" {
         connection {
           type = "ssh"
           user = "root"
-          private_key = "${file("/Users/dggreenbaum/.ssh/id_rsa")}"
+          private_key = "${file("~/.ssh/id_rsa")}"
         }
     }
+
+}
+
+resource "null_resource" "ansible" {
+    depends_on = ["digitalocean_droplet.srv", "digitalocean_droplet.clt", "digitalocean_droplet.bsp"]
     provisioner "local-exec" {
       command = "DO_API_TOKEN=${var.do_token} ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook --connection=ssh --timeout=30 --limit=all --inventory-file=digital_ocean.py --extra-vars \"env=${var.env} dc=${var.dc}\" -vv -u root provision-nomad-cluster.yml"
     }
