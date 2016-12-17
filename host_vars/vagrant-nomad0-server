@@ -1,0 +1,6 @@
+---
+
+consul_iface: "enp0s8"
+nomad_iface: "enp0s8"
+
+spatial_firewall_external_adapter: "enp0s3"
