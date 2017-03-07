@@ -1,33 +1,28 @@
 ---
 
-- hosts: all
+- hosts: "CONSUL_{{ env }}_{{ dc }}:NOMAD_{{ env }}_{{ dc }}"
   gather_facts: no
   tasks:
     - wait_for:
         port: 22
         delay: 10
-    - name: ping all hosts
-      ping:
-    # - name: Print env
-    #   debug:
-    #     var: env
-    # - name: Print dc
-    #   debug:
-    #     var: dc
-    # - name: Print firewall hosts
-    #   debug:
-    #     var: hostvars[item]
-    #   with_items: "{{ groups[spatial_firewall_hosts] }}"
+
+- hosts: "CONSUL_{{ env }}_{{ dc }}"
+  roles:
+    - role: dggreenbaum.openssl-pki
 
 - hosts: "CONSUL_{{ env }}_{{ dc }}"
   become: true
   roles:
     - role: brianshumate.consul
+  #   - role: franklinkim.environment
+
 
 - hosts: "NOMAD_{{ env }}_{{ dc }}"
   become: true
   roles:
     - role: brianshumate.nomad
+    - role: franklinkim.environment
 
 - hosts: "NOMAD_{{ env }}_{{ dc }}"
   become: true

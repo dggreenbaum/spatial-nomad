@@ -7,9 +7,19 @@
   name: brianshumate.nomad
 
 # Role for Hashicorp Consul
-- src: brianshumate.consul
+# Temp consul role until upstream is fixed
+- src: https://github.com/dggreenbaum/ansible-consul
+  version: develop
+  name: brianshumate.consul
 
 - src: git@github.com:dggreenbaum/spatial-firewall.git
   scm: git
   version: master
   name: dggreenbaum.spatial-firewall
+
+- src: git@github.com:dggreenbaum/openssl-pki.git
+  scm: git
+  version: master
+  name: dggreenbaum.openssl-pki
+
+- src: franklinkim.environment

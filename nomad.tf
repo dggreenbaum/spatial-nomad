@@ -22,7 +22,6 @@ resource "digitalocean_droplet" "srv" {
     provisioner "remote-exec" {
         inline = [
           "apt-key update",
-          "apt-get update",
           "apt-get install python -y"
         ]
         connection {
@@ -50,7 +49,6 @@ resource "digitalocean_droplet" "clt" {
     provisioner "remote-exec" {
         inline = [
           "apt-key update",
-          "apt-get update",
           "apt-get install python -y"
         ]
         connection {
@@ -77,7 +75,6 @@ resource "digitalocean_droplet" "bsp" {
     provisioner "remote-exec" {
         inline = [
           "apt-key update",
-          "apt-get update",
           "apt-get install python -y"
         ]
         connection {

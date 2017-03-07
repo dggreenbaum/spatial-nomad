@@ -1,6 +1,7 @@
 ---
-
-consul_version: 0.7.1
+consul_version: "0.7.3"
+consul_zip_url: "http://hashi.greenbad.org/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+consul_checksum_file_url: "http://hashi.greenbad.org/consul/{{ consul_version }}/consul_{{ consul_version }}_SHA256SUMS"
 consul_iface: "eth1"
 consul_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+consul_iface]['ipv4']['address'] }}"
 # TODO move this to Vault
@@ -9,15 +10,62 @@ consul_dnsmasq_enable: true
 consul_datacenter: "{{ dc }}"
 consul_group_name: "CONSUL_{{ env }}_{{ dc }}"
 consul_node_name: "{{ ansible_hostname }}"
+consul_ca_crt: "ca-chain.cert.pem"
+consul_server_crt: "{{ openssl_pki_server_common_name }}.cert.pem"
+consul_server_key: "{{ openssl_pki_server_common_name }}.key.pem"
+consul_verify_incoming: true
+consul_verify_server_hostname: true
+consul_tls_enable: true
+consul_tls_dir: "/srv/keys/ca"
+consul_copy_keys: false
 
-nomad_version: 0.5.0
-nomad_zip_sha256: 7f7b9af2b1ff3e2c6b837b6e95968415237bb304e1e82802bc42abf6f8645a43
+nomad_version: "0.5.3"
+nomad_checksum_file_url: "http://hashi.greenbad.org/nomad/{{ nomad_version }}/nomad_{{ nomad_version}}_SHA256SUMS"
+nomad_zip_url: "http://hashi.greenbad.org/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip"
+nomad_zip_sha256: "0cdb5dd95c918c6237dddeafe2e9d2049558fea79ed43eacdfcd247d5b093d67"
 nomad_iface: "eth1"
 nomad_bind_address: "{{ hostvars[inventory_hostname]['ansible_'+nomad_iface]['ipv4']['address'] }}"
 nomad_enable_docker: true
 nomad_datacenter: "{{ dc }}"
 nomad_group_name: "NOMAD_{{ env }}_{{ dc }}"
+nomad_ca_crt: "ca-chain.cert.pem"
+nomad_server_crt: "{{ openssl_pki_server_common_name }}.cert.pem"
+nomad_server_key: "{{ openssl_pki_server_common_name }}.key.pem"
+nomad_verify_server_hostname: true
+nomad_tls_enable: true
+nomad_tls_dir: "/srv/keys/ca"
+nomad_copy_keys: false
+
+openssl_pki_certs_ca_root_dir: "/Users/dggreenbaum/ca"
+
+openssl_pki_country: "US"
+openssl_pki_locality: "Phoenix"
+openssl_pki_organization: "Spatial\\ Networks"
+openssl_pki_state: "Arizona"
+openssl_pki_ca_common_name: "Spatial\\ Networks\\ Certificate\\ Authority"
+openssl_pki_intermediate_common_name: "Spatial\\ Networks\\ Intermediate\\ Certificate\\ Authority"
+openssl_pki_server_common_name: "{{ ansible_hostname }}.{{ dc }}.consul"
+openssl_pki_server_alternative_names:
+  - "{{ ansible_hostname }}"
+  - "server.global.nomad"
+  - "server.{{ dc }}.nomad"
+  - "{{ nomad_bind_address }}"
+  - "localhost"
+
 
 spatial_firewall_hosts: "{{ nomad_group_name }}"
 spatial_firewall_external_adapter: eth0
 spatial_firewall_internal_adapter: "{{ nomad_iface }}"
+spatial_firewall_allowed_external_ports:
+  - "80"
+  - "443"
+  - "8500"
+  - "8443"
+
+environment_config:
+  NOMAD_ADDR: "{{ nomad_tls_enable | ternary('https', 'http') }}://{{ nomad_bind_address }}:4646"
+  NOMAD_REGION: global
+  NOMAD_CACERT: "{{ nomad_tls_dir }}/{{ nomad_ca_crt }}"
+  NOMAD_CLIENT_CERT: "{{ nomad_tls_dir }}/{{ nomad_server_crt }}"
+  NOMAD_CLIENT_KEY: "{{ nomad_tls_dir }}/{{ nomad_server_key }}"
+  NOMAD_SKIP_VERIFY: false
